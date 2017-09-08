@@ -1,0 +1,16 @@
+unsigned long avenrun[3];
+
+static inline void calc_load(unsigned long ticks)
+{
+   unsigned long active_tasks; /* fixed-point */
+   static int count = LOAD_FREQ;
+
+   count -= ticks;
+   if (count < 0) {
+      count += LOAD_FREQ;
+      active_tasks = count_active_tasks();
+      CALC_LOAD(avenrun[0], EXP_1, active_tasks);
+      CALC_LOAD(avenrun[1], EXP_5, active_tasks);
+      CALC_LOAD(avenrun[2], EXP_15, active_tasks);
+   }
+}
